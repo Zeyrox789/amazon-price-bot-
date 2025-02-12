@@ -16,7 +16,6 @@ from discord.ext import commands
 from dotenv import load_dotenv
 import requests
 import random
-import socket
 
 # Configuration du logging
 logging.basicConfig(
@@ -27,9 +26,6 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
-
-# Configurer le DNS pour utiliser Unbound
-socket.setdefaulttimeout(5)  # Définir un délai d'attente pour les connexions
 
 class AmazonPriceMonitor(discord.Client):
     def __init__(self):
@@ -57,15 +53,7 @@ class AmazonPriceMonitor(discord.Client):
         self.smtp_port = int(os.getenv('SMTP_PORT'))
         
         self.ua = UserAgent()
-        self.proxies = [
-            {'http': 'http://proxy1.com:8080'},
-            {'http': 'http://proxy2.com:8080'},
-            {'http': 'http://proxy3.com:8080'},
-            {'http': 'http://votre-nordvpn-proxy:port'},  # Remplacez par l'adresse de votre proxy NordVPN
-            {'http': 'http://proxy4.com:8080'},  # Nouveau proxy
-            {'http': 'http://proxy5.com:8080'},  # Nouveau proxy
-            {'http': 'http://proxy6.com:8080'}   # Nouveau proxy
-        ]
+        
         self.init_database()
         self.load_products()
         
@@ -147,9 +135,8 @@ class AmazonPriceMonitor(discord.Client):
                 return products
             try:
                 headers = {'User-Agent': self.ua.random}
-                proxy = random.choice(self.proxies)  # Choisir un proxy aléatoire
                 async with aiohttp.ClientSession() as session:
-                    async with session.get(url, headers=headers, proxy=proxy['http']) as response:
+                    async with session.get(url, headers=headers) as response:
                         if response.status == 200:
                             soup = BeautifulSoup(await response.text(), 'html.parser')
                             items = soup.find_all('div', {'data-component-type': 's-search-result'})
@@ -247,7 +234,7 @@ class AmazonPriceMonitor(discord.Client):
             response = requests.get(url, headers=headers)
             if response.status_code == 200:
                 soup = BeautifulSoup(response.text, 'html.parser')
-                price_element = soup.find('span', class_='a-offscreen')
+                price_element = soup.find('span', class_='a-price-whole')
                 if price_element:
                     price_str = price_element.text.replace('€', '').replace(',', '.').strip()
                     return float(price_str)
