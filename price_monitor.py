@@ -30,7 +30,6 @@ logging.basicConfig(
 
 # Configurer le DNS pour utiliser Unbound
 socket.setdefaulttimeout(5)  # Définir un délai d'attente pour les connexions
-socket.getaddrinfo = lambda host, port, family=socket.AF_INET, type=socket.SOCK_STREAM, proto=0, flags=0: socket._getaddrinfo(host, port, family, type, proto, flags)
 
 class AmazonPriceMonitor(discord.Client):
     def __init__(self):
