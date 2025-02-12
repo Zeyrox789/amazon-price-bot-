@@ -140,35 +140,22 @@ class AmazonPriceMonitor(discord.Client):
                         if response.status == 200:
                             soup = BeautifulSoup(await response.text(), 'html.parser')
                             items = soup.find_all('div', {'data-component-type': 's-search-result'})
-                            
+                            logging.info(f"Récupération des produits pour la catégorie: {category_name}")
                             for item in items:
                                 try:
-                                    name = item.find('span', {'class': 'a-text-normal'}).text.strip()
+                                    name = item.find('span', {'class': 'a-size-medium a-color-base a-text-normal'}).text
                                     price_elem = item.find('span', {'class': 'a-price-whole'})
                                     if price_elem:
                                         price_text = price_elem.text.replace(',', '.').replace('€', '').strip()
-                                        # Vérifier si le texte du prix peut être converti en float
                                         if price_text.replace('.', '', 1).isdigit():
                                             current_price = float(price_text)
                                             product_url = 'https://www.amazon.fr' + item.find('a', {'class': 'a-link-normal'})['href']
-                                            
-                                            # Enregistrer le prix normal
                                             await self.save_price(name, current_price, product_url)
-                                            
-                                            # Vérifier si le prix a chuté
-                                            await self.check_price_drop({'name': name, 'url': product_url}, current_price)
-                                            
-                                            products.append({
-                                                'name': name,
-                                                'url': product_url,
-                                                'normal_price': current_price,
-                                                'threshold': 0.8
-                                            })
-                                        else:
-                                            logging.warning(f"Prix non valide pour {name}: {price_text}")
+                                            products.append({'name': name, 'url': product_url, 'normal_price': current_price})
                                 except Exception as e:
                                     logging.error(f"Erreur lors du parsing d'un produit: {str(e)}")
                                     continue
+                            logging.info(f"{len(products)} produits récupérés pour la catégorie: {category_name}")
                         else:
                             logging.warning(f"Impossible de récupérer le prix pour {category_name} (tentative {attempt + 1})")
                         await asyncio.sleep(10)  # Délai entre chaque tentative
