@@ -302,20 +302,12 @@ class AmazonPriceMonitor(discord.Client):
         msg['Subject'] = f" Alerte Prix Bas - {product['name']}"
 
         body = (
-            f"Une baisse de prix importante a été détectée !
-
-"
-            f"Produit: {product['name']}
-"
-            f"Prix actuel: {price}€
-"
-            f"Prix normal: {product['normal_price']}€
-"
-            f"Économie: {product['normal_price'] - price:.2f}€
-
-"
-            f"Lien: {product['url']}
-"
+            f"Une baisse de prix importante a été détectée !\n\n"
+            f"Produit: {product['name']}\n"
+            f"Prix actuel: {price}€\n"
+            f"Prix normal: {product['normal_price']}€\n"
+            f"Économie: {product['normal_price'] - price:.2f}€\n\n"
+            f"Lien: {product['url']}\n"
             f"Ne manquez pas cette opportunité !"
         )
         
