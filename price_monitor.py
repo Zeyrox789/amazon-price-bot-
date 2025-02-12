@@ -289,7 +289,7 @@ class AmazonPriceMonitor(discord.Client):
                 else:
                     logging.warning(f" Impossible de récupérer le prix pour {product['name']}")
                 
-                await asyncio.sleep(2)  # Petit délai entre chaque produit
+                await asyncio.sleep(10)  # Augmenter le délai à 10 secondes entre les vérifications des prix
             except Exception as e:
                 logging.error(f" Erreur lors du traitement de {product['name']}: {str(e)}")
         
