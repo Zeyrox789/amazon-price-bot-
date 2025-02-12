@@ -145,6 +145,7 @@ class AmazonPriceMonitor(discord.Client):
                                 try:
                                     name = item.find('span', {'class': 'a-size-medium a-color-base a-text-normal'}).text
                                     price_elem = item.find('span', {'class': 'a-price-whole'})
+                                    # Vérifier si le prix est valide avant de l'utiliser
                                     if price_elem:
                                         price_text = price_elem.text.replace(',', '.').replace('€', '').strip()
                                         if price_text.replace('.', '', 1).isdigit():
@@ -332,7 +333,7 @@ class AmazonPriceMonitor(discord.Client):
         logging.info(" FIN DE LA VÉRIFICATION")
         logging.info("==========================================")
 
-    async def setup_hook(self):
+    def setup_hook(self):
         """Configure le bot au démarrage"""
         try:
             self.scheduler.add_job(
@@ -356,6 +357,11 @@ async def main():
             await bot.start(os.getenv('DISCORD_TOKEN'))
         except Exception as e:
             logging.error(f" Erreur lors de la connexion au serveur Discord: {str(e)}")
+
+# Instructions pour les tests manuels
+# 1. Démarrez le bot et vérifiez les logs pour toute erreur.
+# 2. Testez les alertes en modifiant les prix des produits dans la base de données.
+# 3. Vérifiez que les alertes sont envoyées correctement sur Discord.
 
 if __name__ == "__main__":
     asyncio.run(main())
