@@ -49,15 +49,10 @@ class AmazonPriceMonitor(discord.Client):
             raise ValueError("ID du canal Discord non trouvé")
         self.discord_channel_id = int(self.discord_channel_id)
         
-        self.discord_channel_id_promo_70 = os.getenv('DISCORD_CHANNEL_ID_PROMO_70')  # ID du salon pour les promotions à -70%
-        if not self.discord_channel_id_promo_70:
-            raise ValueError("ID du canal Discord pour les promotions à -70% non trouvé")
-        self.discord_channel_id_promo_70 = int(self.discord_channel_id_promo_70)
-        
-        self.discord_channel_id_promo_100 = os.getenv('DISCORD_CHANNEL_ID_PROMO_100')  # ID du salon pour les promotions à -100%
-        if not self.discord_channel_id_promo_100:
-            raise ValueError("ID du canal Discord pour les promotions à -100% non trouvé")
-        self.discord_channel_id_promo_100 = int(self.discord_channel_id_promo_100)
+        self.discord_channel_id_promo_70_100 = os.getenv('DISCORD_CHANNEL_ID_PROMO_70_100')  # ID du salon pour les promotions à -70% jusqu'à -100%
+        if not self.discord_channel_id_promo_70_100:
+            raise ValueError("ID du canal Discord pour les promotions à -70% jusqu'à -100% non trouvé")
+        self.discord_channel_id_promo_70_100 = int(self.discord_channel_id_promo_70_100)
         
         # Configuration email
         self.email_address = os.getenv('EMAIL_ADDRESS')
@@ -207,7 +202,10 @@ class AmazonPriceMonitor(discord.Client):
             result = c.fetchone()
             if result:
                 normal_price = result[0]
-                if current_price <= normal_price * 0.0:  # 100 % de réduction
+                if current_price <= normal_price * 0.3:  # 70 % de réduction
+                    message = f"Promotion à -70% sur {product['name']}: maintenant à {current_price}€ !"
+                    await self.send_discord_alert({'name': product['name'], 'message': message}, current_price)
+                elif current_price <= normal_price * 0.0:  # 100 % de réduction
                     message = f"Promotion à -100% sur {product['name']}: maintenant à {current_price}€ !"
                     await self.send_discord_alert({'name': product['name'], 'message': message}, current_price)
 
@@ -280,10 +278,8 @@ class AmazonPriceMonitor(discord.Client):
                 f"Lien: {product['url']}"
             )
         channel = self.get_channel(self.discord_channel_id)
-        if price <= product['normal_price'] * 0.0:  # Si c'est une promotion à -100%
-            channel = self.get_channel(self.discord_channel_id_promo_100)
-        elif price <= product['normal_price'] * 0.3:  # Si c'est une promotion à -70%
-            channel = self.get_channel(self.discord_channel_id_promo_70)
+        if price <= product['normal_price'] * 0.3:  # Si c'est une promotion à -70% ou plus
+            channel = self.get_channel(self.discord_channel_id_promo_70_100)
         if channel:
             await channel.send(message)
         else:
