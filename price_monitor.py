@@ -55,7 +55,8 @@ class AmazonPriceMonitor(discord.Client):
         self.proxies = [
             {'http': 'http://proxy1.com:8080'},
             {'http': 'http://proxy2.com:8080'},
-            {'http': 'http://proxy3.com:8080'}
+            {'http': 'http://proxy3.com:8080'},
+            {'http': 'http://votre-nordvpn-proxy:port'}  # Remplacez par l'adresse de votre proxy NordVPN
         ]
         self.init_database()
         self.load_products()
