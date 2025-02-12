@@ -183,16 +183,10 @@ class AmazonPriceMonitor(discord.Client):
                 normal_price = result[0]
                 if current_price <= normal_price * 0.3:  # 70 % de réduction
                     message = f"Promotion à -70% sur {product['name']}: maintenant à {current_price}€ !"
-                    try:
-                        await self.send_discord_alert({'name': product['name'], 'message': message}, current_price)
-                    except Exception as e:
-                        logging.error(f"Erreur lors de l'envoi de l'alerte pour {product['name']}: {str(e)}")
+                    await self.send_discord_alert({'name': product['name'], 'message': message}, current_price)
                 elif current_price <= normal_price * 0.0:  # 100 % de réduction
                     message = f"Promotion à -100% sur {product['name']}: maintenant à {current_price}€ !"
-                    try:
-                        await self.send_discord_alert({'name': product['name'], 'message': message}, current_price)
-                    except Exception as e:
-                        logging.error(f"Erreur lors de l'envoi de l'alerte pour {product['name']}: {str(e)}")
+                    await self.send_discord_alert({'name': product['name'], 'message': message}, current_price)
 
     async def update_product_list(self):
         """Met à jour la liste des produits depuis toutes les catégories"""
