@@ -4,7 +4,7 @@ import sqlite3
 import json
 import smtplib
 import email.message
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 from datetime import datetime
 import asyncio
 import aiohttp
@@ -14,14 +14,6 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
-
-# Configuration du proxy pour PythonAnywhere
-PYTHONANYWHERE = "pythonanywhere.com" in os.environ.get("HOSTNAME", "")
-if PYTHONANYWHERE:
-    os.environ["http_proxy"] = "http://proxy.server:3128"
-    os.environ["https_proxy"] = "http://proxy.server:3128"
-    import ssl
-    ssl._create_default_https_context = ssl._create_unverified_context
 
 # Configuration du logging
 logging.basicConfig(
@@ -61,6 +53,17 @@ class AmazonPriceMonitor(discord.Client):
         self.init_database()
         self.load_products()
         
+        # URLs des catégories à surveiller
+        self.category_urls = {
+            "PS5 Games": "https://www.amazon.fr/s?k=jeux+ps5&rh=n%3A13910681",
+            "Switch Games": "https://www.amazon.fr/s?k=jeux+nintendo+switch&rh=n%3A13910681",
+            "Washing Machines": "https://www.amazon.fr/s?k=machine+à+laver&rh=n%3A13910671",
+            "Dishwashers": "https://www.amazon.fr/s?k=lave+vaisselle&rh=n%3A13910671",
+            "Ovens": "https://www.amazon.fr/s?k=four+encastrable&rh=n%3A13910671",
+            "Gaming Laptops": "https://www.amazon.fr/s?k=pc+portable+gaming&rh=n%3A13910711",
+            "Gaming PCs": "https://www.amazon.fr/s?k=pc+gamer+fixe&rh=n%3A13910711"
+        }
+
         # Créer le scheduler
         self.scheduler = AsyncIOScheduler()
         
@@ -76,6 +79,14 @@ class AmazonPriceMonitor(discord.Client):
                 url TEXT
             )
         ''')
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS products (
+                name TEXT,
+                url TEXT,
+                normal_price REAL,
+                threshold REAL
+            )
+        ''')
         self.conn.commit()
 
     def load_products(self):
@@ -84,6 +95,59 @@ class AmazonPriceMonitor(discord.Client):
             self.config = json.load(f)
         self.products = self.config['products']
         self.settings = self.config['settings']
+
+    async def scrape_category(self, category_name: str, url: str) -> List[Dict]:
+        """Scrape une catégorie Amazon pour trouver tous les produits"""
+        products = []
+        try:
+            headers = {'User-Agent': self.ua.random}
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, headers=headers) as response:
+                    if response.status == 200:
+                        soup = BeautifulSoup(await response.text(), 'html.parser')
+                        items = soup.find_all('div', {'data-component-type': 's-search-result'})
+                        
+                        for item in items:
+                            try:
+                                name = item.find('span', {'class': 'a-text-normal'}).text.strip()
+                                price_elem = item.find('span', {'class': 'a-price-whole'})
+                                if price_elem:
+                                    price = float(price_elem.text.replace(',', '.').replace('€', '').strip())
+                                    url = 'https://www.amazon.fr' + item.find('a', {'class': 'a-link-normal'})['href']
+                                    
+                                    products.append({
+                                        'name': name,
+                                        'url': url,
+                                        'normal_price': price,
+                                        'threshold': 0.8
+                                    })
+                            except Exception as e:
+                                logging.error(f"Erreur lors du parsing d'un produit: {str(e)}")
+                                continue
+        except Exception as e:
+            logging.error(f"Erreur lors du scraping de la catégorie {category_name}: {str(e)}")
+        
+        return products
+
+    async def update_product_list(self):
+        """Met à jour la liste des produits depuis toutes les catégories"""
+        all_products = []
+        for category_name, url in self.category_urls.items():
+            logging.info(f"Scraping de la catégorie {category_name}...")
+            products = await self.scrape_category(category_name, url)
+            all_products.extend(products)
+            logging.info(f"Trouvé {len(products)} produits dans {category_name}")
+            await asyncio.sleep(2)  # Délai pour éviter d'être bloqué
+
+        # Mise à jour de la base de données
+        self.cursor.execute('DELETE FROM products')  # Supprime les anciens produits
+        for product in all_products:
+            self.cursor.execute('INSERT INTO products VALUES (?, ?, ?, ?)',
+                         (product['name'], product['url'], product['normal_price'], product['threshold']))
+        self.conn.commit()
+
+        self.products = all_products
+        logging.info(f"Liste des produits mise à jour avec {len(all_products)} produits au total")
 
     def get_amazon_price(self, url: str) -> Optional[float]:
         """Récupère le prix d'un produit sur Amazon"""
