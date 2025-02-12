@@ -126,7 +126,7 @@ class AmazonPriceMonitor(discord.Client):
     async def scrape_category(self, category_name: str, url: str) -> List[Dict]:
         """Scrape une catégorie Amazon pour trouver tous les produits"""
         products = []
-        retries = 3  # Nombre de tentatives de récupération
+        retries = 5  # Nombre de tentatives de récupération
         for attempt in range(retries):
             if not await self.is_url_accessible(url):
                 logging.warning(f"L'URL {url} n'est pas accessible, saut de cette catégorie.")
@@ -165,7 +165,7 @@ class AmazonPriceMonitor(discord.Client):
                                     continue
                         else:
                             logging.warning(f"Impossible de récupérer le prix pour {category_name} (tentative {attempt + 1})")
-                        await asyncio.sleep(15)  # Délai entre chaque tentative
+                        await asyncio.sleep(10)  # Délai entre chaque tentative
                 break  # Sortir de la boucle si la récupération réussit
             except Exception as e:
                 logging.error(f"Erreur lors de la récupération des prix: {str(e)}")
