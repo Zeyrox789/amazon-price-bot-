@@ -27,20 +27,20 @@ logging.basicConfig(
 
 class AmazonPriceMonitor(discord.Client):
     def __init__(self):
+        # Configuration des intentions Discord
         intents = discord.Intents.default()
         intents.message_content = True
-        intents.members = True
-        intents.presences = True
         super().__init__(intents=intents)
         
+        # Chargement des variables d'environnement
         load_dotenv()
         self.discord_token = os.getenv('DISCORD_TOKEN')
         if not self.discord_token:
-            raise ValueError(" Token Discord non trouvé dans le fichier .env")
+            raise ValueError("Token Discord non trouvé")
             
         self.discord_channel_id = os.getenv('DISCORD_CHANNEL_ID')
         if not self.discord_channel_id:
-            raise ValueError(" ID du canal Discord non trouvé dans le fichier .env")
+            raise ValueError("ID du canal Discord non trouvé")
         self.discord_channel_id = int(self.discord_channel_id)
         
         # Configuration email
