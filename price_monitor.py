@@ -118,11 +118,17 @@ class AmazonPriceMonitor(discord.Client):
             logging.error(f"Erreur lors de l'accès à l'URL {url}: {str(e)}")
             return False
 
+    async def log_invalid_urls(self, url: str):
+        """Enregistre les URLs invalides dans un fichier"""
+        with open('invalid_urls.log', 'a') as f:
+            f.write(url + '\n')
+
     async def scrape_category(self, category_name: str, url: str) -> List[Dict]:
         """Scrape une catégorie Amazon pour trouver tous les produits"""
         products = []
         if not await self.is_url_accessible(url):
             logging.warning(f"L'URL {url} n'est pas accessible, saut de cette catégorie.")
+            await self.log_invalid_urls(url)  # Enregistrer l'URL invalide
             return products
         try:
             headers = {'User-Agent': self.ua.random}
