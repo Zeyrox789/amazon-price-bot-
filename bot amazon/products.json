@@ -1,0 +1,81 @@
+{
+    "products": [
+        {
+            "name": "PlayStation 5",
+            "url": "https://www.amazon.fr/PlayStation-5-Standard/dp/B08H93ZRK9",
+            "normal_price": 549.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Xbox Series X",
+            "url": "https://www.amazon.fr/Xbox-Series-X-Xbox-Series-X/dp/B08H93ZRLL",
+            "normal_price": 549.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Nintendo Switch OLED",
+            "url": "https://www.amazon.fr/Nintendo-Switch-Model-OLED-blanc/dp/B098RJXBTY",
+            "normal_price": 319.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "MacBook Air M2",
+            "url": "https://www.amazon.fr/2022-Apple-MacBook-Air-Portable/dp/B0B3BMLLRQ",
+            "normal_price": 1499.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Samsung TV QLED 4K 65\"",
+            "url": "https://www.amazon.fr/Samsung-65-Pouces-QE65Q80B-Smart-Built/dp/B09TKKXM9P",
+            "normal_price": 1299.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Lave-vaisselle Bosch",
+            "url": "https://www.amazon.fr/Bosch-SMS4HTI31E-Lave-vaisselle-couverts-Programme/dp/B09NWBHP3N",
+            "normal_price": 649.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Machine à laver Samsung",
+            "url": "https://www.amazon.fr/Samsung-WW90T534DAW-Lave-linge-Intelligent-Connecté/dp/B085NZJB8H",
+            "normal_price": 699.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Réfrigérateur LG",
+            "url": "https://www.amazon.fr/LG-GSL561PZUZ-Réfrigérateur-Américain-capacité/dp/B07NDKF7Z8",
+            "normal_price": 1299.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "ASUS ROG Strix Gaming PC",
+            "url": "https://www.amazon.fr/ASUS-G15DK-R5600X087T-Ordinateur-Ryzen-GeForce/dp/B096KQWW3J",
+            "normal_price": 1299.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "RTX 4070 Ti",
+            "url": "https://www.amazon.fr/MSI-GeForce-RTX-4070-Gaming/dp/B0BQRXFK82",
+            "normal_price": 899.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "FIFA 24",
+            "url": "https://www.amazon.fr/EA-SPORTS-FC-24-Standard/dp/B0CB4CJVX3",
+            "normal_price": 79.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Zelda: Tears of the Kingdom",
+            "url": "https://www.amazon.fr/Legend-Zelda-Tears-Kingdom-Nintendo/dp/B09T2VKXRH",
+            "normal_price": 59.99,
+            "threshold": 0.8
+        }
+    ],
+    "settings": {
+        "check_interval": 120,
+        "max_retries": 3,
+        "retry_delay": 60
+    }
+}
