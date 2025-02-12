@@ -7,69 +7,129 @@
             "threshold": 0.8
         },
         {
-            "name": "Xbox Series X",
-            "url": "https://www.amazon.fr/Xbox-Series-X-Xbox-Series-X/dp/B08H93ZRLL",
-            "normal_price": 549.99,
-            "threshold": 0.8
-        },
-        {
             "name": "Nintendo Switch OLED",
             "url": "https://www.amazon.fr/Nintendo-Switch-Model-OLED-blanc/dp/B098RJXBTY",
             "normal_price": 319.99,
             "threshold": 0.8
         },
         {
-            "name": "MacBook Air M2",
-            "url": "https://www.amazon.fr/2022-Apple-MacBook-Air-Portable/dp/B0B3BMLLRQ",
-            "normal_price": 1499.99,
+            "name": "Spider-Man 2 PS5",
+            "url": "https://www.amazon.fr/Marvel-Spider-Man-2-PS5/dp/B0BXHD5D1N",
+            "normal_price": 79.99,
             "threshold": 0.8
         },
         {
-            "name": "Samsung TV QLED 4K 65\"",
-            "url": "https://www.amazon.fr/Samsung-65-Pouces-QE65Q80B-Smart-Built/dp/B09TKKXM9P",
-            "normal_price": 1299.99,
+            "name": "Final Fantasy XVI PS5",
+            "url": "https://www.amazon.fr/Final-Fantasy-XVI-PS5/dp/B0BHXHSQD5",
+            "normal_price": 79.99,
             "threshold": 0.8
         },
         {
-            "name": "Lave-vaisselle Bosch",
+            "name": "God of War Ragnarök PS5",
+            "url": "https://www.amazon.fr/God-War-Ragnarök-PS5/dp/B09GWTXH7R",
+            "normal_price": 79.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Horizon Forbidden West PS5",
+            "url": "https://www.amazon.fr/Horizon-Forbidden-West-PS5/dp/B09F9QKJJP",
+            "normal_price": 79.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Super Mario Bros. Wonder Switch",
+            "url": "https://www.amazon.fr/Super-Mario-Bros-Wonder-Nintendo/dp/B0C7CQZH4H",
+            "normal_price": 59.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Mario Kart 8 Deluxe Switch",
+            "url": "https://www.amazon.fr/Mario-Kart-8-Deluxe-Switch/dp/B01N1081RO",
+            "normal_price": 59.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Pokemon Écarlate Switch",
+            "url": "https://www.amazon.fr/Pokemon-Écarlate-Nintendo-Switch/dp/B0B2RD2D8F",
+            "normal_price": 59.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Animal Crossing Switch",
+            "url": "https://www.amazon.fr/Animal-Crossing-New-Horizons-Switch/dp/B07HCVN5D3",
+            "normal_price": 59.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Lave-vaisselle Bosch Serie 4",
             "url": "https://www.amazon.fr/Bosch-SMS4HTI31E-Lave-vaisselle-couverts-Programme/dp/B09NWBHP3N",
             "normal_price": 649.99,
             "threshold": 0.8
         },
         {
-            "name": "Machine à laver Samsung",
+            "name": "Lave-vaisselle Siemens",
+            "url": "https://www.amazon.fr/Siemens-SN23HI60CE-Lave-vaisselle-couverts/dp/B08TQNWJ8T",
+            "normal_price": 699.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Machine à laver Samsung EcoBubble",
             "url": "https://www.amazon.fr/Samsung-WW90T534DAW-Lave-linge-Intelligent-Connecté/dp/B085NZJB8H",
             "normal_price": 699.99,
             "threshold": 0.8
         },
         {
-            "name": "Réfrigérateur LG",
-            "url": "https://www.amazon.fr/LG-GSL561PZUZ-Réfrigérateur-Américain-capacité/dp/B07NDKF7Z8",
-            "normal_price": 1299.99,
+            "name": "Machine à laver LG AI DD",
+            "url": "https://www.amazon.fr/LG-F24V9HERA9-Lave-linge-Intelligent-vapeur/dp/B09QKWH8JD",
+            "normal_price": 799.99,
             "threshold": 0.8
         },
         {
-            "name": "ASUS ROG Strix Gaming PC",
+            "name": "Four Encastrable Bosch",
+            "url": "https://www.amazon.fr/Bosch-HBA573BR0-pyrolyse-cuisson-chaleur/dp/B07B8Y9H9T",
+            "normal_price": 599.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "Four Siemens iQ500",
+            "url": "https://www.amazon.fr/Siemens-HB578A0S6-pyrolyse-cuisson-chaleur/dp/B07B8YQH9T",
+            "normal_price": 699.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "PC Portable ASUS ROG Strix G16",
+            "url": "https://www.amazon.fr/ASUS-G614JV-N3163W-Portable-i7-13650HX-GeForce/dp/B0BVZH9K8N",
+            "normal_price": 1999.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "PC Portable MSI Katana",
+            "url": "https://www.amazon.fr/MSI-Katana-17-B12VFK-013FR-Portable/dp/B0BRJ98L8G",
+            "normal_price": 1499.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "PC Portable Lenovo Legion Pro 5",
+            "url": "https://www.amazon.fr/Lenovo-Legion-82WK00FSFR-Portable-GeForce/dp/B0BQWSV671",
+            "normal_price": 1699.99,
+            "threshold": 0.8
+        },
+        {
+            "name": "PC Fixe ASUS ROG Strix G15",
             "url": "https://www.amazon.fr/ASUS-G15DK-R5600X087T-Ordinateur-Ryzen-GeForce/dp/B096KQWW3J",
             "normal_price": 1299.99,
             "threshold": 0.8
         },
         {
-            "name": "RTX 4070 Ti",
-            "url": "https://www.amazon.fr/MSI-GeForce-RTX-4070-Gaming/dp/B0BQRXFK82",
-            "normal_price": 899.99,
+            "name": "PC Fixe MSI MPG Trident",
+            "url": "https://www.amazon.fr/MSI-MPG-Trident-AS-11TC-1621FR/dp/B097F3YHTF",
+            "normal_price": 1599.99,
             "threshold": 0.8
         },
         {
-            "name": "FIFA 24",
-            "url": "https://www.amazon.fr/EA-SPORTS-FC-24-Standard/dp/B0CB4CJVX3",
-            "normal_price": 79.99,
-            "threshold": 0.8
-        },
-        {
-            "name": "Zelda: Tears of the Kingdom",
-            "url": "https://www.amazon.fr/Legend-Zelda-Tears-Kingdom-Nintendo/dp/B09T2VKXRH",
-            "normal_price": 59.99,
+            "name": "PC Fixe Lenovo Legion Tower 5",
+            "url": "https://www.amazon.fr/Lenovo-Legion-90RC00KMFR-Ordinateur-GeForce/dp/B0BL67ZV8M",
+            "normal_price": 1399.99,
             "threshold": 0.8
         }
     ],
