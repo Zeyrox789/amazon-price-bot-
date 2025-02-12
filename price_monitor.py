@@ -353,16 +353,7 @@ class AmazonPriceMonitor(discord.Client):
             
     async def on_ready(self):
         """Appelé quand le bot est connecté et prêt"""
-        logging.info(f" Bot connecté en tant que {self.user}")
-        try:
-            channel = self.get_channel(self.discord_channel_id)
-            if channel:
-                await channel.send(" Bot de surveillance des prix Amazon démarré !")
-                logging.info(f" Message envoyé sur le canal {channel.name}")
-            else:
-                logging.error(f" Canal Discord non trouvé: {self.discord_channel_id}")
-        except Exception as e:
-            logging.error(f" Erreur lors de l'envoi du message Discord: {str(e)}")
+        logging.info(f"Bot connecté en tant que {self.user.name}")
 
 async def main():
     bot = AmazonPriceMonitor()
