@@ -49,6 +49,11 @@ class AmazonPriceMonitor(discord.Client):
             raise ValueError("ID du canal Discord non trouvé")
         self.discord_channel_id = int(self.discord_channel_id)
         
+        self.discord_channel_id_promo = os.getenv('DISCORD_CHANNEL_ID_PROMO')  # ID du salon pour les promotions
+        if not self.discord_channel_id_promo:
+            raise ValueError("ID du canal Discord pour les promotions non trouvé")
+        self.discord_channel_id_promo = int(self.discord_channel_id_promo)
+        
         # Configuration email
         self.email_address = os.getenv('EMAIL_ADDRESS')
         self.email_password = os.getenv('EMAIL_PASSWORD')
@@ -274,6 +279,8 @@ class AmazonPriceMonitor(discord.Client):
                 f"Lien: {product['url']}"
             )
         channel = self.get_channel(self.discord_channel_id)
+        if price <= product['normal_price'] * 0.5:  # Si c'est une promotion à -50%
+            channel = self.get_channel(self.discord_channel_id_promo)
         if channel:
             await channel.send(message)
         else:
