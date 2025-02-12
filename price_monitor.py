@@ -165,11 +165,11 @@ class AmazonPriceMonitor(discord.Client):
                                     continue
                         else:
                             logging.warning(f"Impossible de récupérer le prix pour {category_name} (tentative {attempt + 1})")
-                        await asyncio.sleep(10)  # Délai entre chaque tentative
+                        await asyncio.sleep(15)  # Délai entre chaque tentative
                 break  # Sortir de la boucle si la récupération réussit
             except Exception as e:
                 logging.error(f"Erreur lors de la récupération des prix: {str(e)}")
-                await asyncio.sleep(10)  # Attendre avant de réessayer
+                await asyncio.sleep(15)  # Attendre avant de réessayer
         return products
 
     async def update_product_list(self):
@@ -180,7 +180,7 @@ class AmazonPriceMonitor(discord.Client):
             products = await self.scrape_category(category_name, url)
             all_products.extend(products)
             logging.info(f"Trouvé {len(products)} produits dans {category_name}")
-            await asyncio.sleep(5)  # Délai pour éviter d'être bloqué
+            await asyncio.sleep(10)  # Délai pour éviter d'être bloqué
 
         # Mise à jour de la base de données
         with sqlite3.connect('prices.db') as conn:
@@ -295,7 +295,7 @@ class AmazonPriceMonitor(discord.Client):
                 else:
                     logging.warning(f" Impossible de récupérer le prix pour {product['name']}")
                 
-                await asyncio.sleep(10)  # Augmenter le délai à 10 secondes entre les vérifications des prix
+                await asyncio.sleep(5)  # Délai de 5 secondes entre les vérifications des prix
             except Exception as e:
                 logging.error(f" Erreur lors du traitement de {product['name']}: {str(e)}")
         
