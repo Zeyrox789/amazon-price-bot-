@@ -112,6 +112,15 @@ class AmazonPriceMonitor(discord.Client):
         self.products = self.config['products']
         self.settings = self.config['settings']
 
+    async def check_url_accessible(self, url: str) -> bool:
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as response:
+                    return response.status == 200
+        except Exception as e:
+            logging.error(f"Erreur lors de l'accès à l'URL {url}: {str(e)}")
+            return False
+
     async def is_url_accessible(self, url: str) -> bool:
         """Vérifie si une URL est accessible"""
         try:
@@ -321,17 +330,16 @@ class AmazonPriceMonitor(discord.Client):
             try:
                 logging.info(f"Vérification de {product['name']}...")
                 current_price = self.get_amazon_price(product['url'])
-                if current_price:
+                if current_price is not None:
                     self.save_price(product['name'], current_price, product['url'])
-                    
                     if self.check_price_error(product, current_price):
-                        logging.info(f" PRIX BAS DÉTECTÉ pour {product['name']}: {current_price}€ (Normal: {product['normal_price']}€)")
+                        logging.info(f"PRIX BAS DÉTECTÉ pour {product['name']}: {current_price}€ (Normal: {product['normal_price']}€)")
                         await self.send_discord_alert(product, current_price)
                         self.send_email_alert(product, current_price)
                     else:
-                        logging.info(f" Prix normal pour {product['name']}: {current_price}€")
+                        logging.info(f"Prix normal pour {product['name']}: {current_price}€")
                 else:
-                    logging.warning(f" Impossible de récupérer le prix pour {product['name']}")
+                    logging.warning(f"Impossible de récupérer le prix pour {product['name']}")
                 
                 await asyncio.sleep(5)  # Délai de 5 secondes entre les vérifications des prix
             except Exception as e:
