@@ -126,44 +126,50 @@ class AmazonPriceMonitor(discord.Client):
     async def scrape_category(self, category_name: str, url: str) -> List[Dict]:
         """Scrape une catégorie Amazon pour trouver tous les produits"""
         products = []
-        if not await self.is_url_accessible(url):
-            logging.warning(f"L'URL {url} n'est pas accessible, saut de cette catégorie.")
-            await self.log_invalid_urls(url)  # Enregistrer l'URL invalide
-            return products
-        try:
-            headers = {'User-Agent': self.ua.random}
-            proxy = random.choice(self.proxies)  # Choisir un proxy aléatoire
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=headers, proxy=proxy['http']) as response:
-                    if response.status == 200:
-                        soup = BeautifulSoup(await response.text(), 'html.parser')
-                        items = soup.find_all('div', {'data-component-type': 's-search-result'})
-                        
-                        for item in items:
-                            try:
-                                name = item.find('span', {'class': 'a-text-normal'}).text.strip()
-                                price_elem = item.find('span', {'class': 'a-price-whole'})
-                                if price_elem:
-                                    price_text = price_elem.text.replace(',', '.').replace('€', '').strip()
-                                    # Vérifier si le texte du prix peut être converti en float
-                                    if price_text.replace('.', '', 1).isdigit():
-                                        price = float(price_text)
-                                        url = 'https://www.amazon.fr' + item.find('a', {'class': 'a-link-normal'})['href']
-                                        
-                                        products.append({
-                                            'name': name,
-                                            'url': url,
-                                            'normal_price': price,
-                                            'threshold': 0.8
-                                        })
-                                    else:
-                                        logging.warning(f"Prix non valide pour {name}: {price_text}")
-                            except Exception as e:
-                                logging.error(f"Erreur lors du parsing d'un produit: {str(e)}")
-                                continue
-        except Exception as e:
-            logging.error(f"Erreur lors du scraping de la catégorie {category_name}: {str(e)}")
-        
+        retries = 3  # Nombre de tentatives de récupération
+        for attempt in range(retries):
+            if not await self.is_url_accessible(url):
+                logging.warning(f"L'URL {url} n'est pas accessible, saut de cette catégorie.")
+                await self.log_invalid_urls(url)  # Enregistrer l'URL invalide
+                return products
+            try:
+                headers = {'User-Agent': self.ua.random}
+                proxy = random.choice(self.proxies)  # Choisir un proxy aléatoire
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url, headers=headers, proxy=proxy['http']) as response:
+                        if response.status == 200:
+                            soup = BeautifulSoup(await response.text(), 'html.parser')
+                            items = soup.find_all('div', {'data-component-type': 's-search-result'})
+                            
+                            for item in items:
+                                try:
+                                    name = item.find('span', {'class': 'a-text-normal'}).text.strip()
+                                    price_elem = item.find('span', {'class': 'a-price-whole'})
+                                    if price_elem:
+                                        price_text = price_elem.text.replace(',', '.').replace('€', '').strip()
+                                        # Vérifier si le texte du prix peut être converti en float
+                                        if price_text.replace('.', '', 1).isdigit():
+                                            price = float(price_text)
+                                            url = 'https://www.amazon.fr' + item.find('a', {'class': 'a-link-normal'})['href']
+                                            
+                                            products.append({
+                                                'name': name,
+                                                'url': url,
+                                                'normal_price': price,
+                                                'threshold': 0.8
+                                            })
+                                        else:
+                                            logging.warning(f"Prix non valide pour {name}: {price_text}")
+                                except Exception as e:
+                                    logging.error(f"Erreur lors du parsing d'un produit: {str(e)}")
+                                    continue
+                        else:
+                            logging.warning(f"Impossible de récupérer le prix pour {category_name} (tentative {attempt + 1})")
+                        await asyncio.sleep(10)  # Délai entre chaque tentative
+                break  # Sortir de la boucle si la récupération réussit
+            except Exception as e:
+                logging.error(f"Erreur lors de la récupération des prix: {str(e)}")
+                await asyncio.sleep(10)  # Attendre avant de réessayer
         return products
 
     async def update_product_list(self):
