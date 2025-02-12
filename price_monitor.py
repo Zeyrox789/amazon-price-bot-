@@ -334,7 +334,13 @@ class AmazonPriceMonitor(discord.Client):
                     self.save_price(product['name'], current_price, product['url'])
                     if self.check_price_error(product, current_price):
                         logging.info(f"PRIX BAS DÉTECTÉ pour {product['name']}: {current_price}€ (Normal: {product['normal_price']}€)")
-                        await self.send_discord_alert(product, current_price)
+                        message = (
+                            f"Une erreur de prix a été détectée pour {product['name']} !\n"
+                            f"Prix actuel: {current_price}€\n"
+                            f"Lien: {product['url']}\n"
+                            f"Veuillez vérifier le prix sur le site Amazon !"
+                        )
+                        await self.send_discord_alert({'name': product['name'], 'message': message}, current_price)
                         self.send_email_alert(product, current_price)
                     else:
                         logging.info(f"Prix normal pour {product['name']}: {current_price}€")
