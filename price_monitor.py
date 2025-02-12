@@ -60,7 +60,10 @@ class AmazonPriceMonitor(discord.Client):
             {'http': 'http://proxy1.com:8080'},
             {'http': 'http://proxy2.com:8080'},
             {'http': 'http://proxy3.com:8080'},
-            {'http': 'http://votre-nordvpn-proxy:port'}  # Remplacez par l'adresse de votre proxy NordVPN
+            {'http': 'http://votre-nordvpn-proxy:port'},  # Remplacez par l'adresse de votre proxy NordVPN
+            {'http': 'http://proxy4.com:8080'},  # Nouveau proxy
+            {'http': 'http://proxy5.com:8080'},  # Nouveau proxy
+            {'http': 'http://proxy6.com:8080'}   # Nouveau proxy
         ]
         self.init_database()
         self.load_products()
@@ -169,7 +172,7 @@ class AmazonPriceMonitor(discord.Client):
                 break  # Sortir de la boucle si la récupération réussit
             except Exception as e:
                 logging.error(f"Erreur lors de la récupération des prix: {str(e)}")
-                await asyncio.sleep(15)  # Attendre avant de réessayer
+                await asyncio.sleep(15 * (attempt + 1))  # Attendre avant de réessayer avec un délai exponentiel
         return products
 
     async def update_product_list(self):
