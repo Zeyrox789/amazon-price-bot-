@@ -152,13 +152,19 @@ class AmazonPriceMonitor(discord.Client):
                                         price_text = price_elem.text.replace(',', '.').replace('€', '').strip()
                                         # Vérifier si le texte du prix peut être converti en float
                                         if price_text.replace('.', '', 1).isdigit():
-                                            price = float(price_text)
-                                            url = 'https://www.amazon.fr' + item.find('a', {'class': 'a-link-normal'})['href']
+                                            current_price = float(price_text)
+                                            product_url = 'https://www.amazon.fr' + item.find('a', {'class': 'a-link-normal'})['href']
+                                            
+                                            # Enregistrer le prix normal
+                                            await self.save_price(name, current_price, product_url)
+                                            
+                                            # Vérifier si le prix a chuté
+                                            await self.check_price_drop({'name': name, 'url': product_url}, current_price)
                                             
                                             products.append({
                                                 'name': name,
-                                                'url': url,
-                                                'normal_price': price,
+                                                'url': product_url,
+                                                'normal_price': current_price,
                                                 'threshold': 0.8
                                             })
                                         else:
@@ -174,6 +180,27 @@ class AmazonPriceMonitor(discord.Client):
                 logging.error(f"Erreur lors de la récupération des prix: {str(e)}")
                 await asyncio.sleep(15 * (attempt + 1))  # Attendre avant de réessayer avec un délai exponentiel
         return products
+
+    async def save_price(self, product_name: str, current_price: float, product_url: str):
+        """Enregistre le prix normal d'un produit"""
+        with sqlite3.connect('prices.db') as conn:
+            c = conn.cursor()
+            c.execute('INSERT OR REPLACE INTO products (name, url, normal_price) VALUES (?, ?, ?)',
+                      (product_name, product_url, current_price))
+            conn.commit()
+
+    async def check_price_drop(self, product: Dict, current_price: float):
+        """Vérifie si le prix a chuté de 70 % ou plus"""
+        with sqlite3.connect('prices.db') as conn:
+            c = conn.cursor()
+            c.execute('SELECT normal_price FROM products WHERE name = ?', (product['name'],))
+            result = c.fetchone()
+            if result:
+                normal_price = result[0]
+                if current_price <= normal_price * 0.3:  # 70 % de réduction
+                    await self.send_discord_alert(product, current_price)
+                elif current_price <= normal_price * 0.0:  # 100 % de réduction
+                    await self.send_discord_alert(product, current_price)
 
     async def update_product_list(self):
         """Met à jour la liste des produits depuis toutes les catégories"""
