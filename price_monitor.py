@@ -277,18 +277,11 @@ class AmazonPriceMonitor(discord.Client):
             message = product['message']
         else:
             message = (
-                " ALERTE PRIX BAS!
-
-"
-                f"Produit: {product['name']}
-"
-                f"Prix actuel: {price}€
-"
-                f"Prix normal: {product['normal_price']}€
-"
-                f"Économie: {product['normal_price'] - price:.2f}€
-
-"
+                " ALERTE PRIX BAS!\n\n"
+                f"Produit: {product['name']}\n"
+                f"Prix actuel: {price}€\n"
+                f"Prix normal: {product['normal_price']}€\n"
+                f"Économie: {product['normal_price'] - price:.2f}€\n\n"
                 f"Lien: {product['url']}"
             )
         channel = self.get_channel(self.discord_channel_id)
