@@ -15,6 +15,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 import requests
+import random
 
 # Configuration du logging
 logging.basicConfig(
@@ -51,6 +52,11 @@ class AmazonPriceMonitor(discord.Client):
         self.smtp_port = int(os.getenv('SMTP_PORT'))
         
         self.ua = UserAgent()
+        self.proxies = [
+            {'http': 'http://proxy1.com:8080'},
+            {'http': 'http://proxy2.com:8080'},
+            {'http': 'http://proxy3.com:8080'}
+        ]
         self.init_database()
         self.load_products()
         
@@ -102,8 +108,9 @@ class AmazonPriceMonitor(discord.Client):
         products = []
         try:
             headers = {'User-Agent': self.ua.random}
+            proxy = random.choice(self.proxies)  # Choisir un proxy aléatoire
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=headers) as response:
+                async with session.get(url, headers=headers, proxy=proxy['http']) as response:
                     if response.status == 200:
                         soup = BeautifulSoup(await response.text(), 'html.parser')
                         items = soup.find_all('div', {'data-component-type': 's-search-result'})
@@ -138,14 +145,16 @@ class AmazonPriceMonitor(discord.Client):
             products = await self.scrape_category(category_name, url)
             all_products.extend(products)
             logging.info(f"Trouvé {len(products)} produits dans {category_name}")
-            await asyncio.sleep(2)  # Délai pour éviter d'être bloqué
+            await asyncio.sleep(5)  # Délai pour éviter d'être bloqué
 
         # Mise à jour de la base de données
-        self.cursor.execute('DELETE FROM products')  # Supprime les anciens produits
-        for product in all_products:
-            self.cursor.execute('INSERT INTO products VALUES (?, ?, ?, ?)',
+        with sqlite3.connect('prices.db') as conn:
+            c = conn.cursor()
+            c.execute('DELETE FROM products')  # Supprime les anciens produits
+            for product in all_products:
+                c.execute('INSERT INTO products VALUES (?, ?, ?, ?)',
                          (product['name'], product['url'], product['normal_price'], product['threshold']))
-        self.conn.commit()
+            conn.commit()
 
         self.products = all_products
         logging.info(f"Liste des produits mise à jour avec {len(all_products)} produits au total")
@@ -201,7 +210,7 @@ class AmazonPriceMonitor(discord.Client):
 
     def send_email_alert(self, product: Dict, price: float):
         """Envoie une alerte par email"""
-        msg = MIMEMultipart()
+        msg = email.message.Message()
         msg['From'] = self.email_address
         msg['To'] = self.email_address
         msg['Subject'] = f" Alerte Prix Bas - {product['name']}"
@@ -216,7 +225,7 @@ class AmazonPriceMonitor(discord.Client):
             f"Ne manquez pas cette opportunité !"
         )
         
-        msg.attach(MIMEText(body, 'plain'))
+        msg.attach(email.mime.Text.MIMEText(body, 'plain'))
 
         try:
             server = smtplib.SMTP(self.smtp_server, self.smtp_port)
