@@ -14,6 +14,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+import requests
 
 # Configuration du logging
 logging.basicConfig(
