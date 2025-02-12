@@ -196,10 +196,16 @@ class AmazonPriceMonitor(discord.Client):
                 normal_price = result[0]
                 if current_price <= normal_price * 0.3:  # 70 % de réduction
                     message = f"Promotion à -70% sur {product['name']}: maintenant à {current_price}€ !"
-                    await self.send_discord_alert({'name': product['name'], 'message': message}, current_price)
+                    try:
+                        await self.send_discord_alert({'name': product['name'], 'message': message}, current_price)
+                    except Exception as e:
+                        logging.error(f"Erreur lors de l'envoi de l'alerte pour {product['name']}: {str(e)}")
                 elif current_price <= normal_price * 0.0:  # 100 % de réduction
                     message = f"Promotion à -100% sur {product['name']}: maintenant à {current_price}€ !"
-                    await self.send_discord_alert({'name': product['name'], 'message': message}, current_price)
+                    try:
+                        await self.send_discord_alert({'name': product['name'], 'message': message}, current_price)
+                    except Exception as e:
+                        logging.error(f"Erreur lors de l'envoi de l'alerte pour {product['name']}: {str(e)}")
 
     async def update_product_list(self):
         """Met à jour la liste des produits depuis toutes les catégories"""
@@ -327,7 +333,10 @@ class AmazonPriceMonitor(discord.Client):
                             f"Lien: {product['url']}\n"
                             f"Veuillez vérifier le prix sur le site Amazon !"
                         )
-                        await self.send_discord_alert({'name': product['name'], 'message': message}, current_price)
+                        try:
+                            await self.send_discord_alert({'name': product['name'], 'message': message}, current_price)
+                        except Exception as e:
+                            logging.error(f"Erreur lors de l'envoi de l'alerte pour {product['name']}: {str(e)}")
                         self.send_email_alert(product, current_price)
                     else:
                         logging.info(f"Prix normal pour {product['name']}: {current_price}€")
