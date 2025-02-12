@@ -120,15 +120,20 @@ class AmazonPriceMonitor(discord.Client):
                                 name = item.find('span', {'class': 'a-text-normal'}).text.strip()
                                 price_elem = item.find('span', {'class': 'a-price-whole'})
                                 if price_elem:
-                                    price = float(price_elem.text.replace(',', '.').replace('€', '').strip())
-                                    url = 'https://www.amazon.fr' + item.find('a', {'class': 'a-link-normal'})['href']
-                                    
-                                    products.append({
-                                        'name': name,
-                                        'url': url,
-                                        'normal_price': price,
-                                        'threshold': 0.8
-                                    })
+                                    price_text = price_elem.text.replace(',', '.').replace('€', '').strip()
+                                    # Vérifier si le texte du prix peut être converti en float
+                                    if price_text.replace('.', '', 1).isdigit():
+                                        price = float(price_text)
+                                        url = 'https://www.amazon.fr' + item.find('a', {'class': 'a-link-normal'})['href']
+                                        
+                                        products.append({
+                                            'name': name,
+                                            'url': url,
+                                            'normal_price': price,
+                                            'threshold': 0.8
+                                        })
+                                    else:
+                                        logging.warning(f"Prix non valide pour {name}: {price_text}")
                             except Exception as e:
                                 logging.error(f"Erreur lors du parsing d'un produit: {str(e)}")
                                 continue
