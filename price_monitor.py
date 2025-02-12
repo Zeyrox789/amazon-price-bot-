@@ -199,6 +199,9 @@ class AmazonPriceMonitor(discord.Client):
                 normal_price = result[0]
                 if current_price <= normal_price * 0.3:  # 70 % de réduction
                     await self.send_discord_alert(product, current_price)
+                elif current_price <= normal_price * 0.5:  # 50 % de réduction
+                    message = f"Promotion sur {product['name']}: maintenant à {current_price}€ !"
+                    await self.send_discord_alert({'name': product['name'], 'message': message}, current_price)
                 elif current_price <= normal_price * 0.0:  # 100 % de réduction
                     await self.send_discord_alert(product, current_price)
 
@@ -259,14 +262,17 @@ class AmazonPriceMonitor(discord.Client):
 
     async def send_discord_alert(self, product: Dict, price: float):
         """Envoie une alerte Discord"""
-        message = (
-            " ALERTE PRIX BAS!\n\n"
-            f"Produit: {product['name']}\n"
-            f"Prix actuel: {price}€\n"
-            f"Prix normal: {product['normal_price']}€\n"
-            f"Économie: {product['normal_price'] - price:.2f}€\n\n"
-            f"Lien: {product['url']}"
-        )
+        if 'message' in product:
+            message = product['message']
+        else:
+            message = (
+                " ALERTE PRIX BAS!\n\n"
+                f"Produit: {product['name']}\n"
+                f"Prix actuel: {price}€\n"
+                f"Prix normal: {product['normal_price']}€\n"
+                f"Économie: {product['normal_price'] - price:.2f}€\n\n"
+                f"Lien: {product['url']}"
+            )
         channel = self.get_channel(self.discord_channel_id)
         if channel:
             await channel.send(message)
