@@ -103,9 +103,22 @@ class AmazonPriceMonitor(discord.Client):
         self.products = self.config['products']
         self.settings = self.config['settings']
 
+    async def is_url_accessible(self, url: str) -> bool:
+        """Vérifie si une URL est accessible"""
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as response:
+                    return response.status == 200
+        except Exception as e:
+            logging.error(f"Erreur lors de l'accès à l'URL {url}: {str(e)}")
+            return False
+
     async def scrape_category(self, category_name: str, url: str) -> List[Dict]:
         """Scrape une catégorie Amazon pour trouver tous les produits"""
         products = []
+        if not await self.is_url_accessible(url):
+            logging.warning(f"L'URL {url} n'est pas accessible, saut de cette catégorie.")
+            return products
         try:
             headers = {'User-Agent': self.ua.random}
             proxy = random.choice(self.proxies)  # Choisir un proxy aléatoire
