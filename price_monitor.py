@@ -44,10 +44,9 @@ class AmazonPriceMonitor(discord.Client):
         if not self.discord_token:
             raise ValueError("Token Discord non trouvé")
             
-        self.discord_channel_id = os.getenv('DISCORD_CHANNEL_ID')
+        self.discord_channel_id = 1339229435622326365  # ID du salon amazon-alerts
         if not self.discord_channel_id:
             raise ValueError("ID du canal Discord non trouvé")
-        self.discord_channel_id = int(self.discord_channel_id)
         
         self.discord_channel_id_promo_70_100 = 1339229435622326365  # ID du salon pour les promotions à -70% jusqu'à -100%
         
